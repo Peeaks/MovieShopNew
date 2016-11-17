@@ -1,0 +1,55 @@
+﻿@using DLL.Entities
+@using Microsoft.Ajax.Utilities
+@model PublicUsingRest.Models.HomeGenreSearchViewModel
+@{
+    ViewBag.Title = "Search Page";
+}
+
+<div class="container" style="padding-top: 30px;">
+    <div class="row">
+        @using (Html.BeginForm("GenreSearch", "Home", FormMethod.Get, htmlAttributes: new { @class = "navbar-form", role = "genreSearch" })) {
+            <div class="input-group">
+                @Html.DropDownList("genreSearch", new SelectList(@Model.HomeIndexViewModel.Genres, "Id", "Name"), "Filter by genre", new { @class = "form-control", @placeholder = "Filter by genre", onchange = "this.form.submit()" })
+            </div>
+        }
+    </div>
+
+
+
+    <div class="row">
+        @foreach (var movie in Model.HomeIndexViewModel.Movies) {
+            <div class="col-lg-3 col-md-4 col-sm-6" style="max-height: 630px">
+                <div class="thumbnail" style="margin-top: 10px;">
+                    <a href="@Url.Action("Details", new {id = movie.Id})">
+                        <div style="position: relative; overflow: hidden; padding-bottom: 148%">
+                            <img class="img-responsive" src="@movie.ImageUrl" alt="" style="position: absolute; margin: auto">
+                        </div>
+                    </a>
+                    <div class="caption">
+                        <h4 class="pull-right">$@movie.Price</h4>
+                        <h4>
+                            <a href="@Url.Action("Details", new {id = movie.Id})">@movie.Title</a>
+                        </h4>
+                        <a href="@Url.Action("AddToCart", "Cart", new {id = movie.Id})" class="btn btn-info pull-right">Add to cart</a>
+                        <p>
+                            @movie.Year
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="row">
+        <div class="text-center">
+            <ul class="pagination">
+                @for (int i = 1; i < Model.HomeIndexViewModel.MaxPages + 1; i++) {
+                    <li @if (Model.HomeIndexViewModel.CurrentPage == i) {
+                            <text>class="active"</text>
+                        }>
+                        <a href="@Url.Action("GenreSearch", new {page = i, genreSearch = Model.Genre.Id})">@(i)</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

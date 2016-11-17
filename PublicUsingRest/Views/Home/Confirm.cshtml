@@ -1,0 +1,152 @@
+﻿@using System.Activities.Statements
+@using Microsoft.Ajax.Utilities
+@model DLL.Entities.Order
+@{
+    ViewBag.Title = "Confirm";
+}
+
+<h2>Confirm</h2>
+
+<div class="container" style="padding-top: 30px">
+    <div class="col-md-7">
+
+        @using (Html.BeginForm("Confirm", "Home", FormMethod.Post)) {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new {@class = "text-danger"})
+
+                @for (int i = 0; i < Model.Movies.Count; i++) {
+                    @Html.HiddenFor(model => Model.Movies[i].Genre)
+                    @Html.HiddenFor(model => Model.Movies[i].ImageUrl)
+                    @Html.HiddenFor(model => Model.Movies[i].Price)
+                    @Html.HiddenFor(model => Model.Movies[i].Title)
+                    @Html.HiddenFor(model => Model.Movies[i].TrailerUrl)
+                    @Html.HiddenFor(model => Model.Movies[i].Year)
+                    @Html.HiddenFor(model => Model.Movies[i].Id)
+                }
+
+
+                @Html.HiddenFor(model => model.Customer.Id)
+                @Html.HiddenFor(model => model.Customer.FirstName)
+                @Html.HiddenFor(model => model.Customer.LastName)
+                @Html.HiddenFor(model => model.Customer.Address.Country)
+                @Html.HiddenFor(model => model.Customer.Address.StreetNumber)
+                @Html.HiddenFor(model => model.Customer.Address.ZipCode)
+                @Html.HiddenFor(model => model.Customer.Address.StreetName)
+
+                <h4>Personal info</h4>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.FirstName, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Customer.FirstName, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.FirstName, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.LastName, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Customer.LastName, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.LastName, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.Email, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Customer.Email, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.Email, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.Address.StreetName, new {@class = "control-label col-md-2"})
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(x => x.Customer.Address.StreetName, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.Address.StreetName, "", new {@class = "text-danger"})
+                    </div>
+                    @Html.LabelFor(model => model.Customer.Address.StreetNumber, new {@class = "control-label col-md-2"})
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(x => x.Customer.Address.StreetNumber, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.Address.StreetNumber, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.Address.ZipCode, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Customer.Address.ZipCode, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.Address.ZipCode, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Customer.Address.Country, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(x => x.Customer.Address.Country, new {@readonly = "readonly", @class = "form-control"})
+                        @Html.ValidationMessageFor(model => model.Customer.Address.Country, "", new {@class = "text-danger"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PromoCode.Code, new {@class = "control-label col-md-2"})
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(model => model.PromoCode.Code, new {@readonly = "readonly", @class = "form-control"})
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Buy" class="btn btn-default"/>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-5">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Movie</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var movie in Model.Movies) {
+                <tr>
+                    <td>@movie.Title</td>
+                    @if (HttpContext.Current.Session["currency"] == null) {
+                        <td>@movie.GetPriceCurrency("DKK")</td>
+                    } else {
+                        <td>@movie.GetPriceCurrency(HttpContext.Current.Session["currency"].ToString())</td>
+                    }
+                </tr>
+            }
+            @if (@Model.PromoCode != null) {
+                <tr>
+                    <td>Discount:</td> 
+                    <td>@Model.PromoCode.Discount%</td>
+                </tr>
+            } else {
+                <tr>
+                    <td>Discount:</td>
+                    <td>0%</td>
+                </tr>
+            }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><strong>Total price:</strong></td>
+                    @if (HttpContext.Current.Session["currency"] == null) {
+                        <td><strong>@Model.GetTotalPriceCurrency("DKK")</strong></td>
+                    } else {
+                        <td><strong>@Model.GetTotalPriceCurrency(HttpContext.Current.Session["currency"].ToString())</strong></td>
+                    }
+                </tr>
+            </tfoot>
+            </table>
+</div>
+</div>

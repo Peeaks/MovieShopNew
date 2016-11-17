@@ -1,0 +1,139 @@
+﻿@model DLL.Entities.Cart
+@{
+    ViewBag.Title = "Shopping Cart";
+}
+
+<h3>
+    <em>Review</em> your cart:
+</h3>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-md-offset-1">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th></th>
+                    <th class="text-center"></th>
+                    <th class="text-center">Price</th>
+                    <th> </th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var movie in Model.Movies) {
+                    <tr>
+                        <td class="col-sm-8 col-md-6">
+                            <div class="media">
+                                <a class="thumbnail pull-left" href="#">
+                                    <img class="media-object" src=@movie.ImageUrl style="width: 72px; height: 72px;">
+                                </a>
+                                <div class="media-body">
+                                    <h4 class="media-heading">
+                                        <a href="#">@movie.Title</a>
+                                    </h4>
+
+                                    <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                        </td>
+                        <td class="col-sm-1 col-md-1 text-center">
+                            <strong></strong>
+                        </td>
+                        <td class="col-sm-1 col-md-1 text-center">
+                            @if (HttpContext.Current.Session["currency"] == null) {
+                                <strong>@movie.GetPriceCurrency("DKK")</strong>
+                            } else {
+                                <strong>@movie.GetPriceCurrency(HttpContext.Current.Session["currency"].ToString())</strong>
+                            }
+                        </td>
+                        <td class="col-sm-1 col-md-1">
+                            <a href="@Url.Action("RemoveFromCart", new {id = movie.Id})" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span> Remove
+                            </a>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <h5>Subtotal</h5>
+                    </td>
+                    <td class="text-right">
+                        <h5>
+                            @if (HttpContext.Current.Session["currency"] == null) {
+                                <strong class="pull-right">@Model.GetSubTotalPriceCurrency("DKK")</strong>
+                            } else {
+                                <strong class="pull-right">@Model.GetSubTotalPriceCurrency(HttpContext.Current.Session["currency"].ToString())</strong>
+                            }
+                        </h5>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        @using (Html.BeginForm("AddPromoCode", "Cart", FormMethod.Get, htmlAttributes: new {@class = "form-inline"})) {
+                            <div class="input-group">
+                                @Html.TextBox("promocode", "", new {@class = "form-control", placeholder = "Enter Promo code"})
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" style="margin-right: 10px" type="submit">
+                                        Apply
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <h5>Discount</h5>
+                    </td>
+                    <td class="text-right">
+                        @if (Model.PromoCode != null) {
+                            <h5>
+                                <strong>@Model.PromoCode.Discount%</strong>
+                            </h5>
+                        } else {
+                            <h5>
+                                <strong>0%</strong>
+                            </h5>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <h3>Total</h3>
+                    </td>
+                    <td class="text-right">
+                        @if (HttpContext.Current.Session["currency"] == null) {
+                            <h3 class="pull-right">@Model.GetTotalPriceCurrency("DKK")</h3>
+                        } else {
+                            <h3 class="pull-right">@Model.GetTotalPriceCurrency(HttpContext.Current.Session["currency"].ToString())</h3>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td> </td>
+                    <td> </td>
+                    <td> </td>
+                    <td>
+                        <button type="button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-shopping-cart"></span> Continue Shopping
+                        </button>
+                    </td>
+                    <td>
+                        <a href="@Url.Action("BuyPage", "Home")" class="btn btn-info">Checkout >></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

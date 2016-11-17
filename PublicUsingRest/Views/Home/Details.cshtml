@@ -1,0 +1,66 @@
+﻿@model DLL.Entities.Movie
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>@Model.Title</h2>
+
+<div class="container">
+    <div class="col-md-6">
+        <div class="row">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Title)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Title)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Year)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Year)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Genre)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Genre.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayName("Price")
+                </dt>
+                <dd>
+                    @if (HttpContext.Current.Session["currency"] == null) {
+                        <p>@Model.GetPriceCurrency("DKK"))</p>
+                    } else {
+                        <p>@Model.GetPriceCurrency(HttpContext.Current.Session["currency"].ToString())</p>
+                    }
+                </dd>
+
+            </dl>
+        </div>
+        
+        <div class="row text-center">
+            <a href="@Url.Action("AddToCart", "Cart", new {id = Model.Id})" class="btn btn-lg btn-info">Add to cart</a>
+        </div>
+
+        <div class="row" style="margin-top: 30px">
+            <div class="col-md-12">
+                <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" src="@Model.TrailerUrl" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <img style="max-height: 600px; margin-left: auto; margin-right: auto; margin-top: 20px" class="img-responsive" src="@Model.ImageUrl"/>
+        </div>
+    </div>
+</div>
+
+<p>
+    @Html.ActionLink("Back to List", "Index")
+</p>
